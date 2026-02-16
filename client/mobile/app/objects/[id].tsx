@@ -6,7 +6,8 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system/legacy';
 import { Button } from '@/components/ui/Button';
-import { Heart, Trash2, Download, ChevronLeft } from 'lucide-react-native';
+import { Heart, Trash2, Download, ChevronLeft, Calendar, HardDrive, FileCode } from 'lucide-react-native';
+import { formatBytes } from '@/lib/utils';
 
 export default function ObjectDetailsScreen() {
     const { id } = useLocalSearchParams();
@@ -153,13 +154,47 @@ export default function ObjectDetailsScreen() {
                         />
                     </View>
 
+                    <View style={[styles.fileInfoContainer, { backgroundColor: theme.surface }]}>
+                        <Text style={[styles.infoTitle, { color: theme.text }]}>File Information</Text>
+
+                        <View style={styles.infoRow}>
+                            <View style={styles.infoLabelContainer}>
+                                <Calendar size={16} color={theme.muted} />
+                                <Text style={[styles.infoLabel, { color: theme.muted }]}>Date Added</Text>
+                            </View>
+                            <Text style={[styles.infoValue, { color: theme.text }]}>
+                                {new Date(object.createdAt).toLocaleDateString()}
+                            </Text>
+                        </View>
+
+                        <View style={styles.infoRow}>
+                            <View style={styles.infoLabelContainer}>
+                                <HardDrive size={16} color={theme.muted} />
+                                <Text style={[styles.infoLabel, { color: theme.muted }]}>File Size</Text>
+                            </View>
+                            <Text style={[styles.infoValue, { color: theme.text }]}>
+                                {object.size ? formatBytes(object.size) : 'Unknown'}
+                            </Text>
+                        </View>
+
+                        <View style={styles.infoRow}>
+                            <View style={styles.infoLabelContainer}>
+                                <FileCode size={16} color={theme.muted} />
+                                <Text style={[styles.infoLabel, { color: theme.muted }]}>Format</Text>
+                            </View>
+                            <Text style={[styles.infoValue, { color: theme.text }]}>
+                                {object.imageUrl.split('.').pop()?.toUpperCase() || 'UNKNOWN'}
+                            </Text>
+                        </View>
+                    </View>
+
                     <Button
                         title="Delete Object"
                         variant="ghost"
                         onPress={handleDelete}
                         icon={<Trash2 color={theme.error} size={20} />}
                         textStyle={{ color: theme.error }}
-                        style={{ marginTop: Spacing.xl }}
+                        style={{ marginTop: Spacing.xl, marginBottom: Spacing.section }}
                     />
                 </View>
             </ScrollView>
@@ -235,5 +270,35 @@ const styles = StyleSheet.create({
     },
     actionButton: {
         flex: 1,
+    },
+    fileInfoContainer: {
+        marginTop: Spacing.section,
+        padding: Spacing.xl,
+        borderRadius: BorderRadius.xl,
+        borderWidth: 1,
+        borderColor: '#f0f0f0',
+    },
+    infoTitle: {
+        fontSize: Typography.sizes.md,
+        fontWeight: '700',
+        marginBottom: Spacing.lg,
+    },
+    infoRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: Spacing.sm,
+    },
+    infoLabelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    infoLabel: {
+        fontSize: Typography.sizes.sm,
+    },
+    infoValue: {
+        fontSize: Typography.sizes.sm,
+        fontWeight: '600',
     },
 });

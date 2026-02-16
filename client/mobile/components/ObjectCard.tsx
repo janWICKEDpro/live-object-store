@@ -4,6 +4,7 @@ import { Colors, BorderRadius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Link } from 'expo-router';
 import { Calendar, HardDrive, Heart } from 'lucide-react-native';
+import { formatBytes } from '@/lib/utils';
 
 interface ObjectCardProps {
     id: string;
@@ -11,7 +12,7 @@ interface ObjectCardProps {
     description?: string;
     imageUrl: string;
     createdAt?: string;
-    size?: string;
+    size?: number;
     onPress?: () => void;
 }
 
@@ -25,7 +26,7 @@ export function ObjectCard({ id, title, description, imageUrl, createdAt, size, 
         ? new Date(createdAt).toLocaleDateString()
         : '2/16/2026';
 
-    const displaySize = size || '12 MB';
+    const displaySize = size ? formatBytes(size) : 'unknown size';
 
     return (
         <Link href={`/objects/${id}`} asChild>

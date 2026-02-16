@@ -19,6 +19,7 @@ export class ObjectsService {
         const createdObject = new this.objectModel({
             ...createObjectDto,
             imageUrl,
+            size: file.size,
         });
         const savedObject = await createdObject.save();
         this.eventsGateway.emitNewObject(savedObject);

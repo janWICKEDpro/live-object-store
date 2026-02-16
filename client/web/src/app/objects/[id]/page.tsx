@@ -10,7 +10,7 @@ import { ArrowLeftIcon, CalendarIcon, DownloadIcon, HardDriveIcon, HeartIcon, Tr
 import Link from "next/link"
 import Image from "next/image"
 import { useSavedObjects } from "@/hooks/use-saved-objects"
-import { cn } from "@/lib/utils"
+import { cn, formatBytes } from "@/lib/utils"
 import { ObjectCard } from "@/components/shared/ObjectCard"
 import { useRouter } from "next/navigation"
 import {
@@ -28,6 +28,7 @@ interface StoreObject {
     title: string
     description: string
     imageUrl: string
+    size?: number
     createdAt: string
 }
 
@@ -239,9 +240,9 @@ export default function ObjectDetailsPage() {
                                     <span className="font-medium">Digital Asset</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Added</span>
+                                    <span className="text-muted-foreground">Size</span>
                                     <span className="font-medium">
-                                        {new Date(object.createdAt).toLocaleDateString()}
+                                        {object.size ? formatBytes(object.size) : 'Unknown'}
                                     </span>
                                 </div>
                             </div>

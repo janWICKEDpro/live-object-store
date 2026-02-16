@@ -7,7 +7,7 @@ import { CalendarIcon, HardDriveIcon, HeartIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useSavedObjects } from "@/hooks/use-saved-objects"
-import { cn } from "@/lib/utils"
+import { cn, formatBytes } from "@/lib/utils"
 
 interface ObjectCardProps {
     id: string
@@ -16,10 +16,10 @@ interface ObjectCardProps {
     imageUrl: string
     createdAt: string
     status?: string // e.g., 'Active', 'Pending'
-    size?: string   // e.g., '24 MB'
+    size?: number
 }
 
-export function ObjectCard({ id, title, description, imageUrl, createdAt, status = "Active", size = "12 MB" }: ObjectCardProps) {
+export function ObjectCard({ id, title, description, imageUrl, createdAt, status = "Active", size }: ObjectCardProps) {
     const { isSaved, toggleSave } = useSavedObjects()
     const saved = isSaved(id)
 
@@ -67,7 +67,7 @@ export function ObjectCard({ id, title, description, imageUrl, createdAt, status
                 </div>
                 <div className="flex items-center gap-1">
                     <HardDriveIcon className="w-3 h-3" />
-                    <span>{size}</span>
+                    <span>{size ? formatBytes(size) : "12 MB"}</span>
                 </div>
             </CardFooter>
         </Card>

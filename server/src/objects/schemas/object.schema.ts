@@ -26,6 +26,9 @@ export class StoreObject {
 
     @Prop({ required: true })
     imageUrl: string;
+
+    @Prop({ required: true })
+    size: number;
 }
 
 export const ObjectSchema = SchemaFactory.createForClass(StoreObject);
