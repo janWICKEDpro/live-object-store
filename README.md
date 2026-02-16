@@ -4,6 +4,20 @@ A real-time, cross-platform digital asset management system. This project featur
 
 ---
 
+## Visuals
+
+### Web Dashboard
+![Web Home](screenshots/web/web-home.png)
+![Web Details](screenshots/web/web-details.png)
+
+### Mobile Application
+![Mobile Home](screenshots/mobile/mobile-home.png) ![Mobile Details](screenshots/mobile/mobile-details.png)
+
+### Video Recording
+![Product Demo](screenshots/video/recording.mp4)
+
+---
+
 ## Project Structure
 
 - `server/`: NestJS Backend API & WebSockets.
