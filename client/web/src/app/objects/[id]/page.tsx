@@ -6,12 +6,22 @@ import { NavBar } from "@/components/shared/NavBar"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeftIcon, CalendarIcon, DownloadIcon, HardDriveIcon, HeartIcon } from "lucide-react"
+import { ArrowLeftIcon, CalendarIcon, DownloadIcon, HardDriveIcon, HeartIcon, Trash2Icon } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useSavedObjects } from "@/hooks/use-saved-objects"
 import { cn } from "@/lib/utils"
 import { ObjectCard } from "@/components/shared/ObjectCard"
+import { useRouter } from "next/navigation"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
+import { toast } from "sonner"
 
 interface StoreObject {
     id: string
@@ -23,9 +33,12 @@ interface StoreObject {
 
 export default function ObjectDetailsPage() {
     const { id } = useParams()
+    const router = useRouter()
     const [object, setObject] = useState<StoreObject | null>(null)
     const [relatedObjects, setRelatedObjects] = useState<StoreObject[]>([])
     const [loading, setLoading] = useState(true)
+    const [deleting, setDeleting] = useState(false)
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const { isSaved, toggleSave } = useSavedObjects()
 
     const saved = object ? isSaved(object.id) : false
@@ -61,6 +74,28 @@ export default function ObjectDetailsPage() {
 
         fetchData()
     }, [id])
+
+    const handleDelete = async () => {
+        if (!object) return
+        setDeleting(true)
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/objects/${object.id}`, {
+                method: "DELETE",
+            })
+            if (res.ok) {
+                toast.success("Object deleted successfully")
+                router.push("/")
+            } else {
+                throw new Error("Failed to delete object")
+            }
+        } catch (error) {
+            console.error("Delete error:", error)
+            toast.error("Failed to delete object")
+        } finally {
+            setDeleting(false)
+            setShowDeleteDialog(false)
+        }
+    }
 
     if (loading) {
         return (
@@ -126,7 +161,7 @@ export default function ObjectDetailsPage() {
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-4 pt-6 border-t">
+                        <div className="flex items-center gap-4 pt-6 border-t font-medium">
                             <Button
                                 size="lg"
                                 className="flex-1 bg-primary hover:bg-primary/90 text-white rounded-xl h-14 text-base hover-bouncy"
@@ -146,7 +181,43 @@ export default function ObjectDetailsPage() {
                             >
                                 <HeartIcon className={cn("w-6 h-6", saved && "fill-current")} />
                             </Button>
+                            <Button
+                                size="lg"
+                                variant="outline"
+                                className="rounded-xl h-14 w-14 border-2 hover:bg-transparent hover:border-destructive hover:text-destructive hover-bouncy transition-colors"
+                                onClick={() => setShowDeleteDialog(true)}
+                            >
+                                <Trash2Icon className="w-6 h-6" />
+                            </Button>
                         </div>
+
+                        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                            <DialogContent className="rounded-2xl sm:max-w-md">
+                                <DialogHeader>
+                                    <DialogTitle className="text-2xl font-bold">Delete Object</DialogTitle>
+                                    <DialogDescription className="text-base py-2">
+                                        Are you sure you want to delete <span className="font-semibold text-foreground">"{object.title}"</span>? This action cannot be undone.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter className="mt-4 gap-3 sm:gap-0">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setShowDeleteDialog(false)}
+                                        className="rounded-xl h-12 flex-1 sm:mr-3"
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={handleDelete}
+                                        disabled={deleting}
+                                        className="rounded-xl h-12 flex-1"
+                                    >
+                                        {deleting ? "Deleting..." : "Delete Object"}
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
 
                         <div className="bg-neutral-50 rounded-xl p-6 border space-y-4">
                             <h3 className="font-semibold text-foreground">File Information</h3>

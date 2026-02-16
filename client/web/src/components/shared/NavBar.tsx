@@ -33,7 +33,6 @@ export function NavBar({ onSearch, onUploadClick }: NavBarProps) {
                         </Button>
                     </div>
                     <div className="hidden md:flex items-center gap-6">
-                        <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Documentation</Link>
                         <Button onClick={onUploadClick} className="bg-primary hover:bg-primary/90 text-white shadow-sm gap-2 rounded-lg">
                             <PlusIcon className="w-4 h-4" />
                             Add Object
