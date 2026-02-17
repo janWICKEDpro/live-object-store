@@ -6,14 +6,17 @@ A real-time, cross-platform digital asset management system. This project featur
 
 ## Visuals
 
-### Web Dashboard
-![Web Home](screenshots/web/web-home.png)
-![Web Details](screenshots/web/web-details.png)
+### 🌐 Web Dashboard
+| Home Screen | Object Details | Upload Zone |
+| :---: | :---: | :---: |
+| ![Web Home](screenshots/web/web-home.png) | ![Web Details](screenshots/web/web-details.png) | ![Web Upload](screenshots/web/web-upload.png) |
 
-### Mobile Application
-![Mobile Home](screenshots/mobile/mobile-home.png) ![Mobile Details](screenshots/mobile/mobile-details.png)
+### 📱 Mobile Application
+| Home Screen | Object Details | Upload Modal |
+| :---: | :---: | :---: |
+| ![Mobile Home](screenshots/mobile/mobile-home.png) | ![Mobile Details](screenshots/mobile/mobile-details.png) | ![Mobile Upload](screenshots/mobile/mobile-upload.png) |
 
-### Video Recording
+### 🎥 Video Recording
 ![Product Demo](screenshots/video/recording.mp4)
 
 ---
