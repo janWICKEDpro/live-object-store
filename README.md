@@ -92,7 +92,7 @@ A premium mobile experience built with Expo Router and custom animations.
    ```env
    EXPO_PUBLIC_API_URL=http://localhost:3000
    ```
-4. `npx expo start` (Press `i` for iOS or `a` for Android)
+4. `npm run ios` or `npm run android` (Press `i` for iOS or `a` for Android)
 
 ### Features
 - **Live Status Indicator**: Visual indicator of server connectivity.
@@ -100,12 +100,4 @@ A premium mobile experience built with Expo Router and custom animations.
 - **Real-time Sync**: Uses WebSockets to keep the feed alive as changes happen on the server/web.
 - **Platform-Native Navigation**: Optimized headers for both iOS and Android.
 
----
 
-## Tech Stack
-- **Backend**: NestJS, Mongoose (MongoDB), Supabase Storage, Socket.io.
-- **Web**: Next.js 14, Tailwind CSS, Lucide Icons, Framer Motion.
-- **Mobile**: Expo, React Native, Lucide Native, Reanimated.
-
-## 📄 License
-MIT
