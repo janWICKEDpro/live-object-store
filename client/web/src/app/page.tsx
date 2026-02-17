@@ -9,6 +9,7 @@ import { UploadCloudIcon, SearchIcon } from "lucide-react"
 import io from "socket.io-client"
 import { toast } from "sonner"
 import { useSavedObjects } from "@/hooks/use-saved-objects"
+import { WarmupLoader } from "@/components/shared/WarmupLoader"
 
 interface StoreObject {
   id: string
@@ -24,29 +25,63 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'all' | 'saved'>('all')
+  const [isWarmingUp, setIsWarmingUp] = useState(false)
   const { savedIds } = useSavedObjects()
 
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"
+  const isRender = SERVER_URL.includes("onrender.com")
+
   // Fetch initial data
-  const fetchObjects = async () => {
+  const fetchObjects = async (silent = false) => {
+    if (!silent) setLoading(true)
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/objects`)
-      if (!res.ok) throw new Error("Failed to fetch objects")
+      const res = await fetch(`${SERVER_URL}/objects`)
+      if (!res.ok) {
+        // If it's a 404 or other error on Render, it might still be spinning up or actually failed
+        // But persistent non-200 could also mean its waking up if we can't reach it at all
+        throw new Error("Failed to fetch")
+      }
       const data = await res.json()
-      // API returns format { statusCode, message, data: [] }
       setObjects(data.data || [])
+      setIsWarmingUp(false)
     } catch (error) {
       console.error("Error fetching objects:", error)
-      toast.error("Failed to load objects")
+      if (isRender && objects.length === 0) {
+        setIsWarmingUp(true)
+        startPolling()
+      } else if (!silent) {
+        toast.error("Failed to load objects")
+      }
     } finally {
-      setLoading(false)
+      if (!silent) setLoading(false)
     }
+  }
+
+  const startPolling = () => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`${SERVER_URL}/objects`)
+        if (res.ok) {
+          const data = await res.json()
+          setObjects(data.data || [])
+          setIsWarmingUp(false)
+          setLoading(false)
+          clearInterval(interval)
+        }
+      } catch (e) {
+        // Keep polling
+      }
+    }, 3000)
+
+    // Cleanup interval after 2 minutes to prevent infinite loop
+    setTimeout(() => clearInterval(interval), 120000)
   }
 
   useEffect(() => {
     fetchObjects()
 
     // Real-time updates
-    const socket = io(process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000")
+    const socket = io(SERVER_URL)
 
     socket.on("connect", () => {
       console.log("Connected to socket server")
@@ -117,8 +152,8 @@ export default function Home() {
               <button
                 onClick={() => setActiveTab('all')}
                 className={`relative pb-3 text-sm font-semibold transition-all cursor-pointer whitespace-nowrap outline-none select-none ${activeTab === 'all'
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
                   }`}
               >
                 All Objects <span className="ml-1 bg-primary/10 text-primary px-1.5 py-0.5 rounded-full text-xs">{objects.length}</span>
@@ -129,8 +164,8 @@ export default function Home() {
               <button
                 onClick={() => setActiveTab('saved')}
                 className={`relative pb-3 text-sm font-semibold transition-all cursor-pointer whitespace-nowrap outline-none select-none ${activeTab === 'saved'
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
                   }`}
               >
                 Saved <span className="ml-1 bg-primary/10 text-primary px-1.5 py-0.5 rounded-full text-xs">{savedIds.length}</span>
@@ -155,7 +190,7 @@ export default function Home() {
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {loading ? (
+          {loading && !isWarmingUp ? (
             // Shimmers
             Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="space-y-3">
@@ -166,6 +201,10 @@ export default function Home() {
                 </div>
               </div>
             ))
+          ) : isWarmingUp ? (
+            <div className="col-span-full">
+              <WarmupLoader />
+            </div>
           ) : filteredObjects.length > 0 ? (
             filteredObjects.map((obj) => (
               <ObjectCard
