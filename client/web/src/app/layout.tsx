@@ -13,6 +13,10 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "Live Object Store",
   description: "Manage your 3D assets and visual objects.",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
