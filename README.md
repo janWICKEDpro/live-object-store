@@ -2,6 +2,8 @@
 
 A real-time, cross-platform digital asset management system. This project features a robust **NestJS backend**, a  **Next.js web dashboard**, and an **Expo mobile application**, all synchronized via **WebSockets**.
 
+**🌐 Deployed Application**: [https://live-object.netlify.app/](https://live-object.netlify.app/)
+
 ---
 
 ## Visuals
@@ -63,6 +65,8 @@ The server broadcasts real-time updates to all connected clients:
 ## Web Client
 
 A sleek, responsive dashboard for managing your digital assets.
+
+**Live Demo**: [https://live-object.netlify.app/](https://live-object.netlify.app/)
 
 ###  Getting Started
 1. `cd client/web`
