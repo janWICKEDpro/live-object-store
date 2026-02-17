@@ -17,7 +17,9 @@ A real-time, cross-platform digital asset management system. This project featur
 | ![Mobile Home](screenshots/mobile/mobile-home.png) | ![Mobile Details](screenshots/mobile/mobile-details.png) | ![Mobile Upload](screenshots/mobile/mobile-upload.png) |
 
 ### 🎥 Video Recording
-<video src="screenshots/video/recording.mp4" width="100%" controls></video>
+
+https://github.com/user-attachments/assets/1d7edfda-d2ec-4531-a09b-895dfea357d7
+
 
 ---
 
